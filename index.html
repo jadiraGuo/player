@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>音乐播放器</title>
+	<style type="text/css">
+	*{
+		margin:0;
+		padding: 0;
+	}
+		#musicbox{
+			width: 800px;
+			height: 600px;
+			margin:0 auto;
+			position: relative;
+			background: url(img/bg.png) no-repeat;
+		}
+		#musicbox span{
+			display: block;
+			position: absolute;
+			cursor: pointer;
+		}
+		#on{
+			width: 68px;
+			height: 68px;
+			left: 370px;
+			top: 360px;			
+		}
+		#turnup,#turndown{
+			top: 304px;			
+			width: 25px;
+			height: 25px;
+		}
+		#turndown{
+			left: 293px;
+		}
+		#turnup{
+			right: 293px;
+		}
+		#pre,#next{
+			width: 62px;
+			height: 62px;
+			top:348px;
+		}
+		#pre{
+			left: 281px;
+		}
+		#next{
+			right: 281px;
+		}
+		h1{color: #fff;position: absolute;bottom:70px; left: 40%;font-size: 18px; font-family: "微软雅黑"}
+		#currentTime{
+			position: absolute;
+			bottom: 50px;
+			height: 5px;
+			background: #fff;
+			border-radius: 5px;
+			left: 40%;
+			width: 200px;
+		}
+		#duration{
+			height: 5px;
+			background: #04EAEA;
+			width: 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="musicbox">
+		<span id="on"></span>
+		<span id="turnup"></span>
+		<span id="turndown"></span>
+		<span id="pre"></span>
+		<span id="next"></span>
+		<div id="currentTime">
+			<p id="duration"></p>
+		</div>
+		<h1></h1>
+	</div>
+	<audio src="" id="music" type="audio/mp3" >您的浏览器不支持 audio 标签。</audio>
+	
+</body>
+<script type="text/javascript">
+	var music=document.getElementById("music");
+	var on=document.getElementById("on");
+	var turnup=document.getElementById("turnup");
+	var turndown=document.getElementById("turndown");
+	var pre=document.getElementById("pre");
+	var next=document.getElementById("next");
+	var title=document.getElementsByTagName("h1")[0];
+	var off=true;
+	music.volume=0.5;
+	var index=0;
+	var mlist=[{src:"m/丑八怪 - 薛之谦.mp3",title:"丑八怪 - 薛之谦"},{src:"m/认真的雪 - 薛之谦.mp3",title:"认真的雪 - 薛之谦"},{src:"m/绅士 - 薛之谦.mp3",title:"绅士 - 薛之谦"}];
+	/*切歌*/	
+	var cut=function(){
+		music.src=mlist[index].src;
+		music.play();
+		title.innerHTML=mlist[index].title;
+	}
+	cut();
+	pre.addEventListener("click",function(){
+		index = index==0 ? mlist.length-1 : index-1;
+		cut();
+	})
+	next.addEventListener("click",function(){
+		index = index==mlist.length-1 ? 0 : index+1;
+		cut();
+	})
+	
+	/*暂停*/
+	on.addEventListener("click",function(){
+		if(off){
+			music.play();
+			off=false;
+		}else{
+			music.pause();
+			off=true;
+		}
+		console.log(music.duration)
+		console.log(music.currentTime)
+	})
+	/*音量加大*/
+	turnup.addEventListener("click",function(){
+		music.volume = music.volume==1 ? 1 :  parseFloat(music.volume+0.1).toFixed(1);;
+		console.log(music.volume)
+	})
+	/*音量减小*/
+	turndown.addEventListener("click",function(){
+		music.volume = music.volume==0 ? 0 : parseFloat(music.volume-0.1).toFixed(1);
+		console.log(music.volume)
+	})
+	/*连续播放*/
+	var speed=0;
+	music.addEventListener("timeupdate",function(){		
+		speed=music.currentTime/music.duration;
+		duration.style.width=currentTime.offsetWidth*speed+"px";
+		if(music.duration<=music.currentTime){
+			next.click();
+		}
+	})
+	currentTime.addEventListener("click",function(e){
+		var offset= e.offsetX<0 ? 0 : e.offsetX;
+		duration.style.width=offset+"px";
+		console.log( offset/currentTime.offsetWidth)
+		music.currentTime = music.duration*(offset/currentTime.offsetWidth);
+	})
+</script>
+</html>
